@@ -65,6 +65,7 @@ const WorkLogTooltip = ({ value }) => {
 };
 const MainServicesPage = () => {
   const { username } = useApp();
+  
   const name = username ? username : "Unknown";
   // console.log(11111111, name);
   const { data: services = [], isLoading } = useMainServices();

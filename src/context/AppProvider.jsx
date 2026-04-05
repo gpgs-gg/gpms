@@ -34,7 +34,7 @@ export const AppProvider = ({ children }) => {
   }, []);
 
   const username = useMemo(() => {
-    return decryptedUser?.employee?.Name?.trim() || "";
+    return decryptedUser?.Name?.trim() || "";
   }, [decryptedUser]);
 
   const value = {

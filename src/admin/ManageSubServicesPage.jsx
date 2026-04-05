@@ -78,6 +78,7 @@ const ManageSubServicesPage = ({ mainServiceId, mainServiceTitle, onBack }) => {
       setUpdatingStatusId(null);
     }
   };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
