@@ -1,161 +1,106 @@
-import React from "react";
-// href = "/";
-const quickLinks = [
-  { label: "Home", href: "/" },
-  { label: "Services", href: "#services" },
-  { label: "About Us", href: "#about" },
-  { label: "Contact", href: "#contact" },
-];
-
-const services = [
-  "Deep Cleaning",
-  "Movers & Packers",
-  "Electrical Repairs",
-  "Plumbing Services",
-];
+import { FaBed } from "react-icons/fa";
+import { MdHomeRepairService, MdOutlineRealEstateAgent } from "react-icons/md";
+import { HiLightBulb } from "react-icons/hi";
+import { GiHouse } from "react-icons/gi";
+import { FaFacebookF, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
 
 const Footer = () => {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="bg-black py-12 px-4 text-white">
-      <div className="mx-auto max-w-7xl">
-        {/* ================= Top Section ================= */}
-        <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4 mb-8">
-          {/* Brand */}
-          <div>
-            <h3 className="mb-4 text-2xl font-bold">Elite Property Care</h3>
-            <p className="text-purple-100 leading-relaxed">
-              Your trusted partner for complete property maintenance and
-              management solutions.
-            </p>
-          </div>
+    <footer className="bg-neutral-900 text-white px-6 py-10">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+        {/* Column 1 */}
+        <div className=" sm:text-left">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-2">
+            Gopal's Property Maintenance Services
+          </h2>
+          <p className="text-sm sm:text-base">
+            Your Property, Our Responsibility
+          </p>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="mb-4 text-xl font-bold">Quick Links</h4>
-            <ul className="space-y-2">
-              {quickLinks.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-purple-100 transition hover:text-white"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Services */}
-          <div>
-            <h4 className="mb-4 text-xl font-bold">Services</h4>
-            <ul className="space-y-2 text-purple-100">
-              {services.map((service) => (
-                <li key={service}>{service}</li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h4 className="mb-4 text-xl font-bold">Contact Us</h4>
-            <p className="text-purple-100">+91 98765 43210</p>
-            <p className="text-purple-100">info@eliteproperty.care</p>
-            <p className="mt-2 text-purple-100">Delhi NCR, India</p>
+          {/* Social Icons */}
+          <div className="flex  sm:justify-start gap-4 mt-4 text-lg">
+            <FaFacebookF className="hover:text-blue-500 cursor-pointer" />
+            <FaInstagram className="hover:text-pink-500 cursor-pointer" />
+            <FaTwitter className="hover:text-sky-500 cursor-pointer" />
+            <FaYoutube className="hover:text-red-600 cursor-pointer" />
           </div>
         </div>
 
-        {/* ================= Bottom Bar ================= */}
-        <div className="border-t border-orange-300 pt-8 text-center text-sm md:text-base text-purple-100">
-          <p>
-            &copy; 2026 Elite Property Care. All rights reserved. | Designed for
-            Excellence
-          </p>
+        {/* Column 2 */}
+        <div className="">
+          <ul className="space-y-2 text-sm sm:text-base">
+            <li>
+              <a href="/" className="hover:text-gray-300">
+                Home
+              </a>
+            </li>
+            <li>
+              <a href="#services" className="hover:text-gray-300">
+                Services
+              </a>
+            </li>
+            <li>
+              <a href="#location" className="hover:text-gray-300">
+                Locations
+              </a>
+            </li>
+            <li>
+              <a href="#about" className="hover:text-gray-300">
+                About Us
+              </a>
+            </li>
+            <li>
+              <a href="#contact" className="hover:text-gray-300">
+                Contact Us
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {/* Column 3 */}
+        <div className=" sm:text-left">
+          <h3 className="text-lg sm:text-xl font-semibold mb-3">
+            Gopal’s Group Ventures
+          </h3>
+
+          <ul className="space-y-2 text-sm sm:text-base">
+            <li className="flex  sm:justify-start gap-2">
+              <FaBed /> Gopal's Paying Guest Services
+            </li>
+            <li className="flex r sm:justify-start gap-2">
+              <MdHomeRepairService /> Gopal's Property Maintenance Services
+            </li>
+            <li className="flex  sm:justify-start gap-2">
+              <HiLightBulb /> Gopal's Innovative Tech Solutions
+            </li>
+            <li className="flex  sm:justify-start gap-2">
+              <GiHouse /> Gopal's Homestay Services
+            </li>
+            <li className="flex sm:justify-start gap-2">
+              <MdOutlineRealEstateAgent /> Gopal's Realty Consultancy Services
+            </li>
+          </ul>
         </div>
       </div>
+
+      {/* Bottom */}
+      <div className="border-t border-neutral-700 mt-10 pt-4 pb-12 md:text-center md:text-lg text-white">
+        &copy; {currentYear} Gopal's Property Maintenance Servicess
+        <span className="text-[12px] p-5">
+          {" "}
+          Developed by : Gopal's Innovative Tech Solutions
+        </span>
+      </div>
+      {/* <div className="border-t border-neutral-700 mt-10 pt-4  text-xs  lg: text-center sm:text-sm">
+        © {currentYear} Gopal's Property Maintenance Services
+        <div className="mt-1">
+          Developed by: Gopal's Innovative Tech Solutions
+        </div>
+      </div> */}
     </footer>
   );
 };
 
 export default Footer;
-
-// import React from "react";
-
-// const quickLinks = [
-//   { label: "Home", href: "#home" },
-//   { label: "Services", href: "#services" },
-//   { label: "About Us", href: "#about" },
-//   { label: "Contact", href: "#contact" },
-// ];
-
-// const services = [
-//   "Deep Cleaning",
-//   "Movers & Packers",
-//   "Electrical Repairs",
-//   "Plumbing Services",
-// ];
-
-// const Footer = () => {
-//   return (
-//     <footer className="bg-gradient-to-br from-purple-700 to-pink-600 py-12 px-4 text-white">
-//       <div className="mx-auto max-w-7xl">
-//         {/* ================= Top Section ================= */}
-//         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4 mb-8">
-//           {/* Brand */}
-//           <div>
-//             <h3 className="mb-4 text-2xl font-bold">Elite Property Care</h3>
-//             <p className="text-purple-100 leading-relaxed">
-//               Your trusted partner for complete property maintenance and
-//               management solutions.
-//             </p>
-//           </div>
-
-//           {/* Quick Links */}
-//           <div>
-//             <h4 className="mb-4 text-xl font-bold">Quick Links</h4>
-//             <ul className="space-y-2">
-//               {quickLinks.map((link) => (
-//                 <li key={link.label}>
-//                   <a
-//                     href={link.href}
-//                     className="text-purple-100 transition hover:text-white"
-//                   >
-//                     {link.label}
-//                   </a>
-//                 </li>
-//               ))}
-//             </ul>
-//           </div>
-
-//           {/* Services */}
-//           <div>
-//             <h4 className="mb-4 text-xl font-bold">Services</h4>
-//             <ul className="space-y-2 text-purple-100">
-//               {services.map((service) => (
-//                 <li key={service}>{service}</li>
-//               ))}
-//             </ul>
-//           </div>
-
-//           {/* Contact */}
-//           <div>
-//             <h4 className="mb-4 text-xl font-bold">Contact Us</h4>
-//             <p className="text-purple-100">+91 98765 43210</p>
-//             <p className="text-purple-100">info@eliteproperty.care</p>
-//             <p className="mt-2 text-purple-100">Delhi NCR, India</p>
-//           </div>
-//         </div>
-
-//         {/* ================= Bottom Bar ================= */}
-//         <div className="border-t border-purple-400 pt-8 text-center text-sm md:text-base text-purple-100">
-//           <p>
-//             &copy; 2026 Elite Property Care. All rights reserved. | Designed for
-//             Excellence
-//           </p>
-//         </div>
-//       </div>
-//     </footer>
-//   );
-// };
-
-// export default Footer;

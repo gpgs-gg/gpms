@@ -93,8 +93,8 @@ function ClientLeads({
   ];
 
   const { selectedClient, setSelectedClient, decryptedUser } = useApp();
+   console.log("decryptedUser", decryptedUser);
   const { data: EmployeeDetails } = useEmployeeDetails();
-
   const {
     control,
     handleSubmit,
@@ -342,7 +342,7 @@ function ClientLeads({
           .map((c) => c.trim()) // 👈 removes \n and extra spaces
           .join("\n"); // 👈 comma separated
 
-        log = `[${formatLogDate()} - (${decryptedUser?.employee?.EmployeeID}) ${decryptedUser?.employee?.Name}]
+        log = `[${formatLogDate()} - (${decryptedUser?.EmployeeID}) ${decryptedUser?.Name}]
 ${changeText}${comment ? `\n${comment}` : ""}`;
 
         finalComments = finalComments ? `${finalComments}` : log;
@@ -413,7 +413,7 @@ ${changeText}${comment ? `\n${comment}` : ""}`;
         Assignee: data?.BulkAssignee?.value || "",
         LeadSource: data?.BulkLeadSource?.value || "",
 
-        WorkLogs: `[${formatLogDate()} -(${decryptedUser?.employee?.EmployeeID}) ${decryptedUser?.employee?.Name}]
+        WorkLogs: `[${formatLogDate()} -(${decryptedUser?.EmployeeID}) ${decryptedUser?.Name}]
 Bulk Created`,
         LeadStatus: "New",
         // PhoneCalls: "Not Done",
@@ -440,7 +440,7 @@ Bulk Created`,
         // WhatsAppMsgs: data?.WhatsAppMsgs?.value || "",
         // Visited: data?.visited?.value || "",
         LeadStatus: data?.LeadStatus?.value || "New",
-        WorkLogs: `[${formatLogDate()} - (${decryptedUser?.employee?.EmployeeID}) ${decryptedUser?.employee?.Name}]
+        WorkLogs: `[${formatLogDate()} - (${decryptedUser?.EmployeeID}) ${decryptedUser?.Name}]
 Created by${data.Comments}`,
       };
 
@@ -543,11 +543,10 @@ ${activeLead === tab ? "bg-orange-500 " : "text-gray-50 bg-orange-400 hover:bg-o
         <div className="md:flex md:justify-center grid grid-cols-1 text-xl font-semibold  gap-4 px-3 py-4 rounded-md text-white mb-4">
           {selectedClient === null && (
             <div
-              className={`${TabColor("BulkUploadLeads")} ${
-                selectedClient
+              className={`${TabColor("BulkUploadLeads")} ${selectedClient
                   ? "opacity-50 cursor-not-allowed pointer-events-none"
                   : ""
-              }`}
+                }`}
               onClick={() => {
                 if (!selectedClient) {
                   setActiveLead("BulkUploadLeads");
@@ -669,11 +668,10 @@ ${activeLead === tab ? "bg-orange-500 " : "text-gray-50 bg-orange-400 hover:bg-o
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`mt-5 px-4 py-2 rounded-md text-[16px] text-white ${
-                    isSubmitting
+                  className={`mt-5 px-4 py-2 rounded-md text-[16px] text-white ${isSubmitting
                       ? "bg-orange-300 cursor-not-allowed"
                       : "bg-orange-500 hover:bg-orange-600"
-                  }`}
+                    }`}
                 >
                   {isSubmitting ? (
                     <div className="flex gap-2">
@@ -696,268 +694,268 @@ ${activeLead === tab ? "bg-orange-500 " : "text-gray-50 bg-orange-400 hover:bg-o
           </div>
         ) : // ========================================================== Single Upload Leads =============================================================================================
 
-        activeLead === "CreateSingleLead" ? (
-          <form className="mt-4 sm:p-1 p-3" onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5">
-              {/* Client Name */}
-              <div>
-                <label className="text-sm text-gray-700">
-                  Client Full Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="Enter full Client Name"
-                  className="w-full px-3 py-[8px] border border-orange-400 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-500 shadow-sm hover:border-orange-400"
-                  {...register("ClientName")}
-                />
-              </div>
-              {/* Email */}
-              <div>
-                <label className="text-sm text-gray-700">Email</label>
-                <input
-                  type="email"
-                  placeholder="Enter Email"
-                  className="w-full px-3 py-[8px] border border-orange-400 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-300"
-                  {...register("Email")}
-                />
-                {errors.Email && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.Email.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Gender */}
-              <div>
-                <label className="text-sm text-gray-700">Gender</label>
-                <Controller
-                  name="Gender"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      placeholder="Select Gender"
-                      isClearable
-                      styles={employeeSelectStyles}
-                      options={selectOptionGender}
-                    />
+          activeLead === "CreateSingleLead" ? (
+            <form className="mt-4 sm:p-1 p-3" onSubmit={handleSubmit(onSubmit)}>
+              <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5">
+                {/* Client Name */}
+                <div>
+                  <label className="text-sm text-gray-700">
+                    Client Full Name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter full Client Name"
+                    className="w-full px-3 py-[8px] border border-orange-400 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-500 shadow-sm hover:border-orange-400"
+                    {...register("ClientName")}
+                  />
+                </div>
+                {/* Email */}
+                <div>
+                  <label className="text-sm text-gray-700">Email</label>
+                  <input
+                    type="email"
+                    placeholder="Enter Email"
+                    className="w-full px-3 py-[8px] border border-orange-400 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-300"
+                    {...register("Email")}
+                  />
+                  {errors.Email && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.Email.message}
+                    </p>
                   )}
-                />
-              </div>
+                </div>
 
-              {/* Calling No */}
-              <div>
-                <label className="text-sm text-gray-700">
-                  <span className="relative after:content-['*'] after:ml-1 after:text-red-500">
-                    Calling No
-                  </span>
-                </label>
-                <input
-                  placeholder="Enter Phone No"
-                  className="w-full px-3 py-[8px] border outline-none border-orange-400 rounded-md focus:ring-2 focus:ring-orange-300"
-                  {...register("CallingNo")}
-                />
-                {errors.CallingNo && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.CallingNo.message}
-                  </p>
-                )}
-              </div>
-
-              {/* WhatsApp No */}
-              <div>
-                <label className="text-sm text-gray-700">
-                  <span className="relative after:content-['*'] after:ml-1 after:text-red-500">
-                    WhatsApp No
-                  </span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="Enter WhatsApp No"
-                  className="w-full px-3 py-[8px] border outline-none border-orange-400 rounded-md focus:ring-2 focus:ring-orange-300"
-                  {...register("WhatsAppNo")}
-                />
-                {errors.WhatsAppNo && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.WhatsAppNo.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Lead Source */}
-              <div>
-                <label className="text-sm text-gray-700">Lead Source</label>
-                <Controller
-                  name="LeadSource"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      placeholder="Select Lead Source"
-                      isClearable
-                      styles={employeeSelectStyles}
-                      options={selectOptionLeadSource}
-                    />
-                  )}
-                />
-              </div>
-              <div>
-                <label className="text-sm text-gray-700">Assignee</label>
-                <Controller
-                  name="Assignee"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      placeholder="Select"
-                      isClearable
-                      styles={employeeSelectStyles}
-                      options={ManagerOptions}
-                    />
-                  )}
-                />
-                {errors.Assignee && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.Assignee.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="text-sm text-gray-700">Field Member</label>
-                <Controller
-                  name="FieldMember"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      placeholder="Select"
-                      isClearable
-                      styles={employeeSelectStyles}
-                      options={ManagerOptions}
-                    />
-                  )}
-                />
-              </div>
-
-              {/* {selectedClient && ( */}
-              <div className="">
-                <label className="text-sm text-gray-700">Followup Date</label>
-                <div className="w-full">
+                {/* Gender */}
+                <div>
+                  <label className="text-sm text-gray-700">Gender</label>
                   <Controller
+                    name="Gender"
                     control={control}
-                    name="FollowupDate"
                     render={({ field }) => (
-                      <DatePicker
-                        selected={field.value}
-                        onChange={(date) => field.onChange(date)}
-                        placeholderText="Select Followup Date"
-                        dateFormat="d MMM yyyy"
+                      <Select
+                        {...field}
+                        placeholder="Select Gender"
                         isClearable
-                        className="w-full px-3 py-[8px] border outline-none border-orange-400 rounded-md focus:ring-2 focus:ring-orange-300"
+                        styles={employeeSelectStyles}
+                        options={selectOptionGender}
                       />
                     )}
                   />
                 </div>
-              </div>
 
-              {/* Booking Status */}
-              <div>
-                <label className="text-sm text-gray-700">Lead Status</label>
-                <Controller
-                  name="LeadStatus"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      placeholder="Lead Status"
-                      isClearable
-                      styles={employeeSelectStyles}
-                      options={selectOptionBookingStatus}
-                    />
+                {/* Calling No */}
+                <div>
+                  <label className="text-sm text-gray-700">
+                    <span className="relative after:content-['*'] after:ml-1 after:text-red-500">
+                      Calling No
+                    </span>
+                  </label>
+                  <input
+                    placeholder="Enter Phone No"
+                    className="w-full px-3 py-[8px] border outline-none border-orange-400 rounded-md focus:ring-2 focus:ring-orange-300"
+                    {...register("CallingNo")}
+                  />
+                  {errors.CallingNo && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.CallingNo.message}
+                    </p>
                   )}
-                />
-              </div>
-              <div>
-                <label className="text-sm text-gray-700">Reason</label>
+                </div>
 
-                <Controller
-                  name="Reason"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      placeholder="Select Reason"
-                      isClearable
-                      styles={employeeSelectStyles}
-                      options={selectOptionReason}
-                      // isDisabled={!effectiveLeadStatus}
-                    />
+                {/* WhatsApp No */}
+                <div>
+                  <label className="text-sm text-gray-700">
+                    <span className="relative after:content-['*'] after:ml-1 after:text-red-500">
+                      WhatsApp No
+                    </span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter WhatsApp No"
+                    className="w-full px-3 py-[8px] border outline-none border-orange-400 rounded-md focus:ring-2 focus:ring-orange-300"
+                    {...register("WhatsAppNo")}
+                  />
+                  {errors.WhatsAppNo && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.WhatsAppNo.message}
+                    </p>
                   )}
-                />
-                {errors.Reason && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.Reason.message}
-                  </p>
-                )}
-              </div>
-              {/* Comments */}
-              <div>
-                <label
-                  className={`text-sm text-gray-700 ${selectedClient ? "relative after:content-['*'] after:ml-1 after:text-red-500" : ""}`}
-                >
-                  Comments
-                </label>
-                <textarea
-                  className="w-full px-3 py-[8px] border outline-none border-orange-400 rounded-md focus:ring-2 focus:ring-orange-300"
-                  {...register("Comments")}
-                />
-                {errors.Comments && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.Comments.message}
-                  </p>
-                )}
-              </div>
+                </div>
 
-              {selectedClient && (
-                <div className="md:col-span-3 sm:col-span-2 col-span-1">
-                  <label className="text-sm text-gray-700">Work Logs</label>
-                  <textarea
-                    disabled
-                    className="w-full px-3 py-[8px] border outline-none rounded-md focus:ring-2 focus:ring-orange-300"
-                    {...register("WorkLogs")}
+                {/* Lead Source */}
+                <div>
+                  <label className="text-sm text-gray-700">Lead Source</label>
+                  <Controller
+                    name="LeadSource"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        placeholder="Select Lead Source"
+                        isClearable
+                        styles={employeeSelectStyles}
+                        options={selectOptionLeadSource}
+                      />
+                    )}
                   />
                 </div>
-              )}
-            </div>
+                <div>
+                  <label className="text-sm text-gray-700">Assignee</label>
+                  <Controller
+                    name="Assignee"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        placeholder="Select"
+                        isClearable
+                        styles={employeeSelectStyles}
+                        options={ManagerOptions}
+                      />
+                    )}
+                  />
+                  {errors.Assignee && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.Assignee.message}
+                    </p>
+                  )}
+                </div>
 
-            <div className="flex justify-center items-center gap-5">
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className={`mt-5 px-4 py-2 rounded-md text-[16px] text-white ${isSubmitting ? "bg-orange-300 cursor-not-allowed" : "bg-orange-500 hover:bg-orange-600"}`}
-              >
-                {isSubmitting ? (
-                  <div className="flex justify-center items-center gap-2">
-                    <LoaderPage />
-                    {selectedClient ? "Updating..." : "Submitting..."}
+                <div>
+                  <label className="text-sm text-gray-700">Field Member</label>
+                  <Controller
+                    name="FieldMember"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        placeholder="Select"
+                        isClearable
+                        styles={employeeSelectStyles}
+                        options={ManagerOptions}
+                      />
+                    )}
+                  />
+                </div>
+
+                {/* {selectedClient && ( */}
+                <div className="">
+                  <label className="text-sm text-gray-700">Followup Date</label>
+                  <div className="w-full">
+                    <Controller
+                      control={control}
+                      name="FollowupDate"
+                      render={({ field }) => (
+                        <DatePicker
+                          selected={field.value}
+                          onChange={(date) => field.onChange(date)}
+                          placeholderText="Select Followup Date"
+                          dateFormat="d MMM yyyy"
+                          isClearable
+                          className="w-full px-3 py-[8px] border outline-none border-orange-400 rounded-md focus:ring-2 focus:ring-orange-300"
+                        />
+                      )}
+                    />
                   </div>
-                ) : selectedClient ? (
-                  "Update"
-                ) : (
-                  "Submit"
-                )}
-              </button>
+                </div>
 
-              <p
-                onClick={handleCancel}
-                className="mt-5 border px-4 py-2 rounded-md text-[16px] cursor-pointer text-black"
-              >
-                Cancel
-              </p>
-            </div>
-          </form>
-        ) : null}
+                {/* Booking Status */}
+                <div>
+                  <label className="text-sm text-gray-700">Lead Status</label>
+                  <Controller
+                    name="LeadStatus"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        placeholder="Lead Status"
+                        isClearable
+                        styles={employeeSelectStyles}
+                        options={selectOptionBookingStatus}
+                      />
+                    )}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm text-gray-700">Reason</label>
+
+                  <Controller
+                    name="Reason"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        placeholder="Select Reason"
+                        isClearable
+                        styles={employeeSelectStyles}
+                        options={selectOptionReason}
+                      // isDisabled={!effectiveLeadStatus}
+                      />
+                    )}
+                  />
+                  {errors.Reason && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.Reason.message}
+                    </p>
+                  )}
+                </div>
+                {/* Comments */}
+                <div>
+                  <label
+                    className={`text-sm text-gray-700 ${selectedClient ? "relative after:content-['*'] after:ml-1 after:text-red-500" : ""}`}
+                  >
+                    Comments
+                  </label>
+                  <textarea
+                    className="w-full px-3 py-[8px] border outline-none border-orange-400 rounded-md focus:ring-2 focus:ring-orange-300"
+                    {...register("Comments")}
+                  />
+                  {errors.Comments && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.Comments.message}
+                    </p>
+                  )}
+                </div>
+
+                {selectedClient && (
+                  <div className="md:col-span-3 sm:col-span-2 col-span-1">
+                    <label className="text-sm text-gray-700">Work Logs</label>
+                    <textarea
+                      disabled
+                      className="w-full px-3 py-[8px] border outline-none rounded-md focus:ring-2 focus:ring-orange-300"
+                      {...register("WorkLogs")}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-center items-center gap-5">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`mt-5 px-4 py-2 rounded-md text-[16px] text-white ${isSubmitting ? "bg-orange-300 cursor-not-allowed" : "bg-orange-500 hover:bg-orange-600"}`}
+                >
+                  {isSubmitting ? (
+                    <div className="flex justify-center items-center gap-2">
+                      <LoaderPage />
+                      {selectedClient ? "Updating..." : "Submitting..."}
+                    </div>
+                  ) : selectedClient ? (
+                    "Update"
+                  ) : (
+                    "Submit"
+                  )}
+                </button>
+
+                <p
+                  onClick={handleCancel}
+                  className="mt-5 border px-4 py-2 rounded-md text-[16px] cursor-pointer text-black"
+                >
+                  Cancel
+                </p>
+              </div>
+            </form>
+          ) : null}
       </div>
     </div>
   );

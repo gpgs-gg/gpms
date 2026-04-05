@@ -170,7 +170,7 @@ const Contact = () => {
                   title="Head Office"
                   lines={[
                     "Plot No. 132B, Lane No. 7, Nandanvan CHS, ",
-                    "Sector-17, Nerul (E), Navi Mumbai - 400706, Maharashtra",
+                    "Sector-17, Nerul (E), Navi Mumbai - 400706",
                   ]}
                 />
 

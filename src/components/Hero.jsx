@@ -83,13 +83,12 @@ export default function Hero() {
             >
               {/* Heading */}
               <h1 className=" text-black text-[26px] md:text-[28px]  lg:text-[40px] md:leading-[1.3]  lg:leading-[1.2] font-bold  md:mb-4 ">
-                Transform Your Property With Our Quality Care & Services
+               Transform Your Property with Quality Care & Professional Services
               </h1>
               <br />
               {/* Subheading */}
               <p className="text-gray-400 text-base lg:text-[20px] leading-[1.25] sm:leading-[1.3] lg:leading-[1.5] lg:max-w-3xl sm:max-w-2xl mx-auto mb-8 italic">
-                “Make Life Easier and More Comfortable with Trusted, Quality
-                Services.”
+               Make life easier and more comfortable with trusted, high-quality services.
               </p>
 
               {/* Buttons */}

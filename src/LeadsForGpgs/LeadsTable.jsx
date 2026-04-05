@@ -78,7 +78,7 @@ function LeadsTable({ setActiveTab, activeLead, setActiveLead }) {
   useEffect(() => {
     if (!isDefaultMode) return;
 
-    const empName = decryptedUser?.employee?.Name;
+    const empName = decryptedUser?.Name;
 
     if (!empName || !ManagerOptions.length) return;
 
@@ -349,7 +349,7 @@ function LeadsTable({ setActiveTab, activeLead, setActiveLead }) {
         const newAssignee = transferAssignee.label;
 
         const newLog =
-          `[${formatLogDate()} - (${decryptedUser?.employee?.EmployeeID}) ${decryptedUser?.employee?.Name}]\n` +
+          `[${formatLogDate()} - (${decryptedUser?.EmployeeID}) ${decryptedUser?.Name}]\n` +
           `Lead transferred ${oldAssignee} to ${newAssignee}\n${comment}`;
 
         payload.push({
@@ -565,14 +565,14 @@ function LeadsTable({ setActiveTab, activeLead, setActiveLead }) {
 
         if (changedFields.length > 0) {
           newLogs +=
-            `[${formatLogDate()} - (${decryptedUser?.employee?.EmployeeID}) ${decryptedUser?.employee?.Name}]\n` +
+            `[${formatLogDate()} - (${decryptedUser?.EmployeeID}) ${decryptedUser?.Name}]\n` +
             changedFields.join("\n");
         }
 
         if (edited.newWorkLog?.trim()) {
           newLogs +=
             `${newLogs ? "\n" : ""}` +
-            `[${formatLogDate()} - (${decryptedUser?.employee?.EmployeeID}) ${decryptedUser?.employee?.Name}]\n` +
+            `[${formatLogDate()} - (${decryptedUser?.EmployeeID}) ${decryptedUser?.Name}]\n` +
             edited.newWorkLog.trim();
         }
 
@@ -1124,8 +1124,8 @@ function LeadsTable({ setActiveTab, activeLead, setActiveLead }) {
                 </button>
 
                 {openFilter === f.key && (
-                  <div className="absolute right-0 w-52 sm:w-56 bg-white border rounded-xl shadow-xl z-50 p-5 border-orange-300">
-                    <div className="flex gap-2 mb-2 flex-wrap">
+                  <div className="absolute right-0 w-52 h-60 overflow-y-auto sm:w-56 bg-white border rounded-xl shadow-xl z-50 px-5 border-orange-300">
+                    <div className="flex gap-2 mb-2 sticky top-0 p-3 bg-white flex-wrap">
                       <button
                         onClick={() =>
                           setFilters((p) => ({
