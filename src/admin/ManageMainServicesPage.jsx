@@ -1,5 +1,6 @@
 import { pdfjs } from "react-pdf";
-
+import { useAuth } from "../context/AuthContext.jsx";
+import MainServiceCard from "./MainServiceCard.jsx";
 import {
   useMainServices,
   useCreateMainService,
@@ -7,6 +8,7 @@ import {
   useDeleteMainService,
   useUpdateMainServiceStatus,
 } from "../components/services/index";
+import { generateWorklog, generateCreateWorklog } from "../../Config";
 import { MoreVertical, Pencil, Tags, Plus, LayoutGrid } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -64,10 +66,11 @@ const WorkLogTooltip = ({ value }) => {
   );
 };
 const MainServicesPage = () => {
-  const { username } = useApp();
-  
+  const { user } = useAuth();
+  const username = user?.Name;
+  const userEmpId = user?.EmployeeID;
   const name = username ? username : "Unknown";
-  // console.log(11111111, name);
+  // console.log(11111111, username, userEmpId);
   const { data: services = [], isLoading } = useMainServices();
   const statusMutation = useUpdateMainServiceStatus();
   const createMutation = useCreateMainService();
@@ -104,45 +107,50 @@ const MainServicesPage = () => {
   const [openMenu, setOpenMenu] = useState(null);
   // const { decryptedUser } = useApp();
   // const LOGGED_IN_USER = `${decryptedUser?.employee?.Name}` || "Unknow User";
+  //Format date and time
+  const formatLogDateTime = (date = new Date()) => {
+    return date
+      .toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })
+      .replace(",", "")
+      .replace(/\bam\b/, "AM")
+      .replace(/\bpm\b/, "PM");
+  };
+
+  const buildUpdatedByEntry = (user) => {
+    return `[${formatLogDateTime()} - ${user}]`;
+  };
   const [formData, setFormData] = useState({
     title: "",
     desc: "",
     img: "",
     sectionId: "",
   });
-  //! confirmation box for upating status
-  // const confirmStatusToggle = () => {
-  //   if (!serviceToToggle) return;
-  //   setUpdatingId(id);
-  //   statusMutation.mutate(
-  //     {
-  //       Id: serviceToToggle.id,
-  //       Status: serviceToToggle.status === "active" ? "inactive" : "active",
-  //     },
-  //     {
-  //       onSuccess: () => {
-  //         toast.success("Status updated successfully");
-  //         setIsStatusModalOpen(false);
-  //         setServiceToToggle(null);
-  //       },
-  //       onError: () => {
-  //         toast.error("Failed to update status");
-  //       },
-  //     },
-  //   );
-  // };
 
   const confirmStatusToggle = () => {
     if (!serviceToToggle) return;
 
     const id = serviceToToggle.id || serviceToToggle.Id;
+    const newStatus =
+      serviceToToggle.status === "active" ? "inactive" : "active";
+
+    // ✅ CREATE STATUS WORKLOG
+    const statusLog = `[${formatLogDateTime()} - (${userEmpId}) ${name}]
+Status changed from ${serviceToToggle.status} to ${newStatus}\n\n`;
 
     setUpdatingId(id); // 👈 mark this row as updating
 
     statusMutation.mutate(
       {
         Id: id,
-        Status: serviceToToggle.status === "active" ? "inactive" : "active",
+        Status: newStatus,
+        WorkLogs: statusLog,
         updatedBy: name,
       },
       {
@@ -194,67 +202,181 @@ const MainServicesPage = () => {
 
     return page > 0 ? `${baseUrl}#page=${page}` : baseUrl;
   };
+
   const handleFinalSubmit = () => {
     const formDataToSend = new FormData();
 
     formDataToSend.append("Title", formData.title);
     formDataToSend.append("Description", formData.desc);
-    formDataToSend.append("updatedBy", name);
 
-    if (selectedFile) {
-      formDataToSend.append("image", selectedFile);
-    }
-    if (selectedIconFile) {
-      formDataToSend.append("icon", selectedIconFile);
-    }
-    if (selectedPdfFile) {
-      formDataToSend.append("pdf", selectedPdfFile);
-    }
-    if (selectedInfoPdfFile) {
+    if (selectedFile) formDataToSend.append("image", selectedFile);
+    if (selectedIconFile) formDataToSend.append("icon", selectedIconFile);
+    if (selectedPdfFile) formDataToSend.append("pdf", selectedPdfFile);
+    if (selectedInfoPdfFile)
       formDataToSend.append("informationPdf", selectedInfoPdfFile);
-    }
 
-    if (removeInfoPdf) {
-      formDataToSend.append("removeInformationPdf", "true");
-    }
-    if (removePdf) {
-      formDataToSend.append("removePdf", "true");
-    }
-    if (removeImage) {
-      formDataToSend.append("removeImage", "true");
-    }
-    if (removeIcon) {
-      formDataToSend.append("removeIcon", "true");
-    }
-    // Optional Category
+    if (removeInfoPdf) formDataToSend.append("removeInformationPdf", "true");
+    if (removePdf) formDataToSend.append("removePdf", "true");
+    if (removeImage) formDataToSend.append("removeImage", "true");
+    if (removeIcon) formDataToSend.append("removeIcon", "true");
+
     if (categories.length > 0) {
       formDataToSend.append("Category", JSON.stringify(categories));
     }
 
+    // =========================
+    // ✅ GENERATE WORKLOG FIRST
+    // =========================
+
+    let finalWorkLog = "";
+
+    if (editingService) {
+      const oldData = {
+        Title: editingService.Title || editingService.title,
+        Description:
+          editingService.Description ||
+          editingService.description ||
+          editingService.desc,
+      };
+
+      const newData = {
+        Title: formData.title,
+        Description: formData.desc,
+      };
+
+      finalWorkLog = generateWorklog(oldData, newData, name, userEmpId);
+    } else {
+      const newData = {
+        Title: formData.title,
+        Description: formData.desc,
+      };
+
+      finalWorkLog = generateCreateWorklog(newData, name, userEmpId);
+    }
+
+    // ✅ Append BEFORE API call
     if (editingService) {
       formDataToSend.append("Id", editingService.Id || editingService.id);
-
-      updateMutation.mutate(formDataToSend, {
-        onSuccess: () => {
-          toast.success("Service updated successfully");
-          resetAll();
-        },
-        onError: () => {
-          toast.error("Failed to update service");
-        },
-      });
-    } else {
-      createMutation.mutate(formDataToSend, {
-        onSuccess: () => {
-          toast.success("Service created successfully");
-          resetAll();
-        },
-        onError: () => {
-          toast.error("Failed to create service");
-        },
-      });
     }
+    formDataToSend.append("WorkLogs", finalWorkLog);
+
+    // =========================
+    // ✅ API CALL
+    // =========================
+
+    const mutation = editingService ? updateMutation : createMutation;
+
+    mutation.mutate(formDataToSend, {
+      onSuccess: () => {
+        toast.success(
+          editingService
+            ? "Service updated successfully"
+            : "Service created successfully",
+        );
+        resetAll();
+      },
+      onError: () => {
+        toast.error(
+          editingService
+            ? "Failed to update service"
+            : "Failed to create service",
+        );
+      },
+    });
   };
+  // const handleFinalSubmit = () => {
+  //   const formDataToSend = new FormData();
+
+  //   formDataToSend.append("Title", formData.title);
+  //   formDataToSend.append("Description", formData.desc);
+
+  //   if (selectedFile) {
+  //     formDataToSend.append("image", selectedFile);
+  //   }
+  //   if (selectedIconFile) {
+  //     formDataToSend.append("icon", selectedIconFile);
+  //   }
+  //   if (selectedPdfFile) {
+  //     formDataToSend.append("pdf", selectedPdfFile);
+  //   }
+  //   if (selectedInfoPdfFile) {
+  //     formDataToSend.append("informationPdf", selectedInfoPdfFile);
+  //   }
+
+  //   if (removeInfoPdf) {
+  //     formDataToSend.append("removeInformationPdf", "true");
+  //   }
+  //   if (removePdf) {
+  //     formDataToSend.append("removePdf", "true");
+  //   }
+  //   if (removeImage) {
+  //     formDataToSend.append("removeImage", "true");
+  //   }
+  //   if (removeIcon) {
+  //     formDataToSend.append("removeIcon", "true");
+  //   }
+
+  //   // Optional Category
+  //   if (categories.length > 0) {
+  //     formDataToSend.append("Category", JSON.stringify(categories));
+  //   }
+
+  //   // Title change tracking
+  //   let finalWorkLog = "";
+  //   if (editingService) {
+  //     const oldData = {
+  //       Title: editingService.Title || editingService.title,
+  //       Description:
+  //         editingService.Description ||
+  //         editingService.description ||
+  //         editingService.desc,
+  //     };
+
+  //     const newData = {
+  //       Title: formData.title,
+  //       Description: formData.desc,
+  //     };
+
+  //     finalWorkLog = generateWorklog(oldData, newData, name, userEmpId);
+  //   } else {
+  //     const newData = {
+  //       Title: formData.title,
+  //       Description: formData.desc,
+  //     };
+
+  //     finalWorkLog = generateCreateWorklog(newData, name, userEmpId);
+  //   }
+
+  //   // ✅ Append BEFORE API call
+  //   formDataToSend.append("Id", editingService.Id || editingService.id);
+  //   formDataToSend.append("WorkLogs", finalWorkLog);
+
+  //   if (editingService) {
+  //     formDataToSend.append("Id", editingService.Id || editingService.id);
+  //     formDataToSend.append("WorkLogs", finalWorkLog); // Now sending string, not object
+
+  //     updateMutation.mutate(formDataToSend, {
+  //       onSuccess: () => {
+  //         toast.success("Service updated successfully");
+  //         resetAll();
+  //       },
+  //       onError: () => {
+  //         toast.error("Failed to update service");
+  //       },
+  //     });
+  //   } else {
+  //     formDataToSend.append("WorkLogs", finalWorkLog);
+  //     createMutation.mutate(formDataToSend, {
+  //       onSuccess: () => {
+  //         toast.success("Service created successfully");
+  //         resetAll();
+  //       },
+  //       onError: () => {
+  //         toast.error("Failed to create service");
+  //       },
+  //     });
+  //   }
+  // };
 
   const handleEdit = (service) => {
     setEditingService(service);
@@ -306,9 +428,9 @@ const MainServicesPage = () => {
   return (
     <div className="px-4 py-1 ">
       <div className="flex justify-between items-center mb-4 ">
-        <div className="text-2xl font-bold text-gray-900">
+        <div className=" text-lg md:text-2xl font-bold text-gray-900">
           {viewMode === "main" && (
-            <h1 className="text-2xl font-bold text-gray-900 mt-3">
+            <h1 className=" text:text-lg md:text-2xl font-bold text-gray-900 mt-3">
               Main Services
             </h1>
           )}
@@ -317,7 +439,7 @@ const MainServicesPage = () => {
         {viewMode === "main" && (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg"
+            className="flex items-center gap-2 text-[12px] md:text-[16px] bg-black text-white px-4 py-2 rounded-lg"
           >
             <Plus size={18} />
             Add Service
@@ -362,7 +484,7 @@ const MainServicesPage = () => {
         </div>
       ) : viewMode === "main" ? (
         <div className="bg-white shadow rounded-xl border z-20 pb-2">
-          <div className="max-h-[480px] overflow-y-auto  overflow-x-auto ">
+          <div className="max-h-[480px] hidden md:block overflow-y-auto  overflow-x-auto ">
             <table className="w-full text-left min-w-[600px] ">
               <thead className="bg-black text-white text-xl">
                 <tr>
@@ -566,7 +688,7 @@ hover:-translate-y-1 "
                         </div>
                       )}
                     </td>
-                    {/* worklob */}
+                    {/* worklog */}
                     <td className="p-4">
                       <WorkLogTooltip value={service.workLogs} />
                     </td>
@@ -583,6 +705,34 @@ hover:-translate-y-1 "
                 ))}
               </tbody>
             </table>
+          </div>
+          <div className="block md:hidden space-y-3">
+            {services.map((service) => (
+              <MainServiceCard
+                key={service.Id || service.id}
+                service={service}
+                updatingId={updatingId}
+                setZoomImage={setZoomImage}
+                setOpenPdf={(pdf) => {
+                  const previewUrl = getDrivePreviewUrl(pdf);
+                  setActivePdf(previewUrl);
+                  setOpen(true);
+                }}
+                onToggleStatus={(srv) => {
+                  setServiceToToggle(srv);
+                  setIsStatusModalOpen(true);
+                }}
+                onOpenCategories={(srv) => {
+                  setSelectedParent(srv);
+                  setViewMode("categories");
+                }}
+                onOpenSubServices={(srv) => {
+                  setSelectedParent(srv);
+                  setViewMode("sub");
+                }}
+                onEdit={handleEdit}
+              />
+            ))}
           </div>
         </div>
       ) : viewMode === "categories" ? (
@@ -700,10 +850,18 @@ hover:-translate-y-1 "
       {/* ================= Modal ================= */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/40 z-[500] flex justify-center items-center">
-          <div className="bg-white p-6  rounded-xl w-[400px] lg:w-[700px] shadow-lg">
-            <h2 className="text-lg font-semibold mb-4">
-              {editingService ? "Edit Service" : "Add Service"}
-            </h2>
+          <div className="bg-white w-full h-full md:h-auto md:w-[400px] lg:w-[700px] p-4 md:p-6 md:rounded-xl shadow-none md:shadow-lg overflow-y-auto">
+            <div className="sticky top-0 bg-white z-10 pb-2 mb-2 border-b">
+              <div className="flex justify-between items-center">
+                <h2 className="text-lg font-semibold">
+                  {editingService ? "Edit Service" : "Add Service"}
+                </h2>
+
+                <button onClick={closeModal} className="text-xl">
+                  ✕
+                </button>
+              </div>
+            </div>
 
             <form className="space-y-4">
               <label className="block text-sm font-medium text-gray-600 mb-1">
@@ -734,7 +892,7 @@ hover:-translate-y-1 "
                 required
               />
 
-              <div className=" grid grid-cols-4 gap-6 mx-4 items-start">
+              <div className=" grid grid-cols-2 md:grid-cols-4 gap-6 mx-4 items-start">
                 {/* img */}
                 <div className="">
                   <label className="block text-sm font-medium text-gray-600 mb-1">
@@ -816,7 +974,7 @@ hover:-translate-y-1 "
                 previewImage ||
                 previewPdf ||
                 previewInfoPdf) && (
-                <div className="mt-4 grid grid-cols-4 gap-6 mx-4 items-start">
+                <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-6 mx-4 items-start">
                   {/* IMAGE SLOT */}
                   <div className="relative h-20 w-20">
                     {previewImage && (
@@ -910,101 +1068,6 @@ hover:-translate-y-1 "
                   </div>
                 </div>
               )}
-              {/* {(previewIcon ||
-                previewImage ||
-                previewPdf ||
-                previewInfoPdf) && (
-                <div className="mt-4 grid grid-cols-4 gap-6 mx-4 items-start">
-               
-                  {previewImage && (
-                    <div className="relative h-20 w-20">
-                      <img
-                        src={previewImage}
-                        alt="Preview"
-                        className="h-20 w-20 object-cover border"
-                      />
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPreviewImage(null);
-                          setSelectedFile(null);
-                          setRemoveImage(true);
-                        }}
-                        className="absolute -top-2 -right-2 bg-black text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-gray-800"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  )}
-
-                 
-                  {previewIcon && (
-                    <div className="relative h-20 w-20">
-                      <img
-                        src={previewIcon}
-                        alt="Icon Preview"
-                        className="h-20 w-20 object-contain border"
-                      />
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPreviewIcon(null);
-                          setSelectedIconFile(null);
-                          setRemoveIcon(true);
-                        }}
-                        className="absolute -top-2 -right-2 bg-black text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-gray-800"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  )}
-
-               
-                  {(previewPdf || selectedPdfFile) && (
-                    <div className="relative h-20 w-20">
-                      <div className="h-20 w-20 border flex items-center justify-center bg-white">
-                        <i className="fa-solid fa-file-pdf text-red-600 text-4xl"></i>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPreviewPdf(null);
-                          setSelectedPdfFile(null);
-                          setRemovePdf(true);
-                        }}
-                        className="absolute -top-2 -right-2 bg-black text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-gray-800"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  )}
-                 
-                  {(previewInfoPdf || selectedInfoPdfFile) && (
-                    <div className="relative h-20 w-20">
-                      <div className="h-20 w-20 border flex items-center justify-center bg-white">
-                        <i className="fa-solid fa-file-pdf text-red-600 text-4xl"></i>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPreviewInfoPdf(null);
-                          setSelectedInfoPdfFile(null);
-                          setRemoveInfoPdf(true);
-                        }}
-                        className="absolute -top-2 -right-2 bg-black text-white rounded-full w-6 h-6"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  )}
-              
-                </div>
-              )} */}
-
               <div className="flex justify-end gap-3">
                 <button
                   type="button"
@@ -1140,8 +1203,6 @@ hover:-translate-y-1 "
 
 export default MainServicesPage;
 
-// import { useState } from "react";
-// import { Plus } from "lucide-react";
 // import { pdfjs } from "react-pdf";
 
 // import {
@@ -1151,6 +1212,8 @@ export default MainServicesPage;
 //   useDeleteMainService,
 //   useUpdateMainServiceStatus,
 // } from "../components/services/index";
+// import { MoreVertical, Pencil, Tags, Plus, LayoutGrid } from "lucide-react";
+// import { useState } from "react";
 // import { toast } from "react-toastify";
 // import "react-toastify/dist/ReactToastify.css";
 // import ManageSubServicesPage from "./ManageSubServicesPage.jsx";
@@ -1207,6 +1270,7 @@ export default MainServicesPage;
 // };
 // const MainServicesPage = () => {
 //   const { username } = useApp();
+  
 //   const name = username ? username : "Unknown";
 //   // console.log(11111111, name);
 //   const { data: services = [], isLoading } = useMainServices();
@@ -1242,6 +1306,7 @@ export default MainServicesPage;
 //   const [selectedInfoPdfFile, setSelectedInfoPdfFile] = useState(null);
 //   const [previewInfoPdf, setPreviewInfoPdf] = useState(null);
 //   const [removeInfoPdf, setRemoveInfoPdf] = useState(false);
+//   const [openMenu, setOpenMenu] = useState(null);
 //   // const { decryptedUser } = useApp();
 //   // const LOGGED_IN_USER = `${decryptedUser?.employee?.Name}` || "Unknow User";
 //   const [formData, setFormData] = useState({
@@ -1512,7 +1577,6 @@ export default MainServicesPage;
 //                   <th className="p-4 bg-black sticky top-0 z-30">Image</th>
 //                   <th className="p-4 bg-black sticky top-0 z-30">Icon</th>
 
-//                   <th className="p-4 bg-black sticky top-0 z-30">Actions</th>
 //                   <th className="p-4 bg-black sticky top-0 z-30">Status</th>
 //                   <th className="p-4 bg-black sticky top-0 z-30">
 //                     {" "}
@@ -1522,10 +1586,8 @@ export default MainServicesPage;
 //                     {" "}
 //                     Information PDF
 //                   </th>
-//                   <th className="p-4 bg-black sticky top-0 z-30">Categories</th>
-//                   <th className="p-4 bg-black sticky top-0 z-30">
-//                     Sub Services
-//                   </th>
+//                   <th className="p-4 bg-black sticky top-0 z-30">Actions</th>
+
 //                   <th className="p-4 bg-black sticky top-0 z-30">Worklogs</th>
 //                 </tr>
 //               </thead>
@@ -1563,30 +1625,6 @@ export default MainServicesPage;
 //                       />
 //                     </td>
 
-//                     <td className="p-4">
-//                       <button
-//                         onClick={() => handleEdit(service)}
-//                         className="text-orange-500 hover:orange-blue-700 px-3 py-1"
-//                       >
-//                         <i className="fas fa-edit"></i>
-//                       </button>
-
-//                       {/* <button
-//                         onClick={() => handleDelete(service)}
-//                         disabled={deleteMutation.isPending}
-//                         className={`text-red-500 hover:text-red-700 ${
-//                           deleteMutation.isPending
-//                             ? "opacity-50 cursor-not-allowed"
-//                             : ""
-//                         }`}
-//                       >
-//                         {deleteMutation.isPending ? (
-//                           <span className="bw-loader"></span>
-//                         ) : (
-//                           <Trash2 size={18} />
-//                         )}
-//                       </button> */}
-//                     </td>
 //                     {/* toggle button for the status */}
 
 //                     <td className="p-4">
@@ -1681,27 +1719,57 @@ export default MainServicesPage;
 //                         </div>
 //                       )}
 //                     </td>
-//                     <td className="p-4 ">
+//                     <td className="p-4 relative">
 //                       <button
-//                         onClick={() => {
-//                           setSelectedParent(service);
-//                           setViewMode("categories");
-//                         }}
-//                         className="text-orange-500 hover:orange-blue-700 px-3 py-1"
+//                         onClick={() =>
+//                           setOpenMenu(
+//                             openMenu === service.id ? null : service.id,
+//                           )
+//                         }
+//                         className="p-2 font-bold  rounded hover:bg-gray-100"
 //                       >
-//                         <i className="fas fa-edit"></i>
+//                         <MoreVertical size={22} />
 //                       </button>
-//                     </td>
-//                     <td className="p-4">
-//                       <button
-//                         onClick={() => {
-//                           setSelectedParent(service);
-//                           setViewMode("sub");
-//                         }}
-//                         className="text-orange-500 hover:orange-blue-700 px-3 py-1"
-//                       >
-//                         <i className="fas fa-edit"></i>
-//                       </button>
+
+//                       {/* Dropdown */}
+//                       {openMenu === service.id && (
+//                         <div className="absolute right-6 mt-2 w-44 bg-white border rounded-lg shadow-lg z-50">
+//                           {/* Edit */}
+//                           <button
+//                             onClick={() => {
+//                               handleEdit(service);
+//                               setOpenMenu(null);
+//                             }}
+//                             className="flex items-center text-orange-500 gap-2 w-full px-4 py-2 hover:bg-gray-100 text-sm"
+//                           >
+//                             <Pencil size={16} /> Edit
+//                           </button>
+
+//                           {/* Categories */}
+//                           <button
+//                             onClick={() => {
+//                               setSelectedParent(service);
+//                               setViewMode("categories");
+//                               setOpenMenu(null);
+//                             }}
+//                             className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 text-sm"
+//                           >
+//                             <Tags size={16} /> Categories
+//                           </button>
+
+//                           {/* Sub Services */}
+//                           <button
+//                             onClick={() => {
+//                               setSelectedParent(service);
+//                               setViewMode("sub");
+//                               setOpenMenu(null);
+//                             }}
+//                             className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 text-sm"
+//                           >
+//                             <LayoutGrid size={16} /> Sub Services
+//                           </button>
+//                         </div>
+//                       )}
 //                     </td>
 //                     {/* worklob */}
 //                     <td className="p-4">
@@ -2052,7 +2120,7 @@ export default MainServicesPage;
 //                 previewPdf ||
 //                 previewInfoPdf) && (
 //                 <div className="mt-4 grid grid-cols-4 gap-6 mx-4 items-start">
-
+               
 //                   {previewImage && (
 //                     <div className="relative h-20 w-20">
 //                       <img
@@ -2075,6 +2143,7 @@ export default MainServicesPage;
 //                     </div>
 //                   )}
 
+                 
 //                   {previewIcon && (
 //                     <div className="relative h-20 w-20">
 //                       <img
@@ -2097,6 +2166,7 @@ export default MainServicesPage;
 //                     </div>
 //                   )}
 
+               
 //                   {(previewPdf || selectedPdfFile) && (
 //                     <div className="relative h-20 w-20">
 //                       <div className="h-20 w-20 border flex items-center justify-center bg-white">
@@ -2116,7 +2186,7 @@ export default MainServicesPage;
 //                       </button>
 //                     </div>
 //                   )}
-
+                 
 //                   {(previewInfoPdf || selectedInfoPdfFile) && (
 //                     <div className="relative h-20 w-20">
 //                       <div className="h-20 w-20 border flex items-center justify-center bg-white">
@@ -2136,7 +2206,7 @@ export default MainServicesPage;
 //                       </button>
 //                     </div>
 //                   )}
-
+              
 //                 </div>
 //               )} */}
 
@@ -2274,3 +2344,4 @@ export default MainServicesPage;
 // };
 
 // export default MainServicesPage;
+

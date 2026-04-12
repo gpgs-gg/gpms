@@ -319,7 +319,10 @@ const Header = () => {
                 </button> */}
 
                 <button
-                  onClick={() => navigate("/dashboard")}
+                  onClick={() => {
+                    navigate("/dashboard");
+                    setMenuOpen(false);
+                  }}
                   className="text-left font-semibold"
                 >
                   Dashboard
@@ -328,6 +331,7 @@ const Header = () => {
                   onClick={() => {
                     navigate("/gpms-leads");
                     setAccountOpen(false);
+                    setMenuOpen(false);
                   }}
                   className="text-left font-semibold"
                 >
@@ -371,23 +375,55 @@ const Header = () => {
 
 export default Header;
 
-// import React, { useState } from "react";
+// import { useState, useEffect, useRef } from "react";
 // import AOS from "aos";
 // import "aos/dist/aos.css";
-// import { useEffect } from "react";
-// import logo from "../assets/all_icons/GPMS-Logo.png";
-// import { Link, useNavigate } from "react-router-dom";
+
+// import logo from "@/assets/commanImages/GPMS-Logo.jpeg";
+// import { Link, useNavigate, useLocation } from "react-router-dom";
 // import { useAuth } from "../context/AuthContext";
 
+// // const navLinks = [
+// //   { label: "Home", href: "/" },
+// //   { label: "Services", href: "#services" },
+// //   { label: "About Us", href: "#about" },
+// //   { label: "Location", href: "#location" },
+// //   { label: "Contact Us", href: "#contact" },
+// // ];
 // const navLinks = [
-//   { label: "Home", href: "/" },
-//   { label: "Services", href: "#services" },
-//   { label: "About Us", href: "#about" },
-//   { label: "Location", href: "#location" },
-//   { label: "Contact Us", href: "#contact" },
+//   { label: "Services", section: "services" },
+//   { label: "About Us", section: "about" },
+//   { label: "Location", section: "location" },
+//   { label: "Contact Us", section: "contact" },
 // ];
 
 // const Header = () => {
+//   useEffect(() => {
+//     const handleScroll = () => {
+//       setScrolled(window.scrollY > 50);
+//     };
+
+//     window.addEventListener("scroll", handleScroll);
+
+//     return () => window.removeEventListener("scroll", handleScroll);
+//   }, []);
+//   const handleNavigation = (section) => {
+//     if (location.pathname !== "/") {
+//       navigate("/");
+
+//       setTimeout(() => {
+//         const element = document.getElementById(section);
+//         if (element) {
+//           element.scrollIntoView({ behavior: "smooth" });
+//         }
+//       }, 200);
+//     } else {
+//       const element = document.getElementById(section);
+//       if (element) {
+//         element.scrollIntoView({ behavior: "smooth" });
+//       }
+//     }
+//   };
 //   const handleLogout = () => {
 //     logout();
 //     localStorage.clear();
@@ -400,27 +436,50 @@ export default Header;
 //     });
 //     AOS.refresh();
 //   }, []);
+//   useEffect(() => {
+//     const handleClickOutside = (event) => {
+//       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+//         setAccountOpen(false);
+//       }
+//     };
+
+//     document.addEventListener("mousedown", handleClickOutside);
+
+//     return () => {
+//       document.removeEventListener("mousedown", handleClickOutside);
+//     };
+//   }, []);
 //   const { isAuthenticated, logout } = useAuth();
 //   const navigate = useNavigate();
 //   const [accountOpen, setAccountOpen] = useState(false);
-
+//   const [scrolled, setScrolled] = useState(false);
 //   const [menuOpen, setMenuOpen] = useState(false);
+//   const dropdownRef = useRef(null);
 
 //   return (
-//     <header className="w-full font-nunito bg-white shadow-lg sticky top-0 z-[100]">
-//       <div className="flex items-center justify-between px-4 sm:px-6 lg:px-10 py-1">
-//         {/* Logo */}
-//         <a href="/" className="flex items-center">
-//           <img
-//             src={logo}
-//             alt="Company Logo"
-//             className="h-20 lg:h-24 w-auto object-contain"
-//           />
-//         </a>
-
+//     <header
+//       className={`w-full  sticky top-0 z-[100] transition-all duration-300 ${
+//         scrolled ? "bg-white shadow-lg" : "bg-white shadow-lg"
+//       }`}
+//     >
+//       <div className="flex items-center justify-between px-4 sm:px-6 lg:px-10 ">
+//         {/* TEXT */}
+//         <div className="flex gap-2 lg:gap-4 items-center justify-center py-2">
+//           {/* Logo */}
+//           <a href="/" className="flex items-center">
+//             <img
+//               src={logo}
+//               alt="Company Logo"
+//               className="h-20 lg:h-20 w-auto object-contain"
+//             />
+//           </a>
+//           <h1 className="text-black text-[20px] uppercase md:text-[28px]  lg:text-[30px] md:leading-[1.3]  lg:leading-[1.2] font-bold">
+//             Property <span className="">Maintenance</span> Services
+//           </h1>
+//         </div>
 //         {/* ================= Desktop Navigation (md and up) ================= */}
 //         <nav className="hidden lg:flex items-center space-x-4 lg:space-x-6 xl:space-x-8 flex-shrink-0">
-//           {navLinks.map((link) => (
+//           {/* {navLinks.map((link) => (
 //             <a
 //               key={link.label}
 //               href={link.href}
@@ -428,10 +487,32 @@ export default Header;
 //             >
 //               {link.label}
 //             </a>
-//           ))}
+//           ))} */}
+//           <button className="text-black font-semibold text-[16px] lg:text-[18px]">
+//             <a href="/">Home</a>
+//           </button>
+//           {navLinks.map((link) =>
+//             link.section ? (
+//               <button
+//                 key={link.label}
+//                 onClick={() => handleNavigation(link.section)}
+//                 className="text-black font-semibold text-[16px] lg:text-[18px]"
+//               >
+//                 {link.label}
+//               </button>
+//             ) : (
+//               <Link
+//                 key={link.label}
+//                 to={link.path}
+//                 className="text-black font-semibold text-[16px] lg:text-[18px]"
+//               >
+//                 {link.label}
+//               </Link>
+//             ),
+//           )}
 
 //           {/* my account login register */}
-//           <div className="relative">
+//           <div className="relative" ref={dropdownRef}>
 //             {!isAuthenticated ? (
 //               <Link
 //                 to="/my-account"
@@ -449,7 +530,7 @@ export default Header;
 //                 </button>
 
 //                 {accountOpen && (
-//                   <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 z-50">
+//                   <div className="absolute right-0 mt-2 w-48 lg:w-54 bg-white shadow-lg rounded-lg py-2 z-50">
 //                     {/* <button
 //                       onClick={() => {
 //                         navigate("/profile");
@@ -467,7 +548,17 @@ export default Header;
 //                       }}
 //                       className="block w-full text-left px-4 py-2 hover:bg-gray-100"
 //                     >
-//                       Dashboard
+//                       Services Dashboard
+//                     </button>
+
+//                     <button
+//                       onClick={() => {
+//                         navigate("/gpms-leads");
+//                         setAccountOpen(false);
+//                       }}
+//                       className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+//                     >
+//                       Leads
 //                     </button>
 
 //                     <button
@@ -551,7 +642,7 @@ export default Header;
 //           className="lg:hidden absolute top-full left-0 w-full bg-white shadow-lg"
 //         >
 //           <nav className="flex flex-col space-y-4 px-4 py-6">
-//             {navLinks.map((link) => (
+//             {/* {navLinks.map((link) => (
 //               <a
 //                 key={link.label}
 //                 href={link.href}
@@ -560,7 +651,33 @@ export default Header;
 //               >
 //                 {link.label}
 //               </a>
-//             ))}
+//             ))} */}
+//             <button className="text-left font-semibold">
+//               <a href="/">Home</a>
+//             </button>
+//             {navLinks.map((link) =>
+//               link.section ? (
+//                 <button
+//                   key={link.label}
+//                   onClick={() => {
+//                     handleNavigation(link.section);
+//                     setMenuOpen(false);
+//                   }}
+//                   className="text-left font-semibold"
+//                 >
+//                   {link.label}
+//                 </button>
+//               ) : (
+//                 <Link
+//                   key={link.label}
+//                   to={link.path}
+//                   onClick={() => setMenuOpen(false)}
+//                   className="text-left font-semibold"
+//                 >
+//                   {link.label}
+//                 </Link>
+//               ),
+//             )}
 //             {!isAuthenticated ? (
 //               <Link
 //                 to="/my-account"
@@ -571,18 +688,27 @@ export default Header;
 //               </Link>
 //             ) : (
 //               <>
-//                 <button
+//                 {/* <button
 //                   onClick={() => navigate("/profile")}
 //                   className="text-left font-semibold"
 //                 >
 //                   Profile
-//                 </button>
+//                 </button> */}
 
 //                 <button
 //                   onClick={() => navigate("/dashboard")}
 //                   className="text-left font-semibold"
 //                 >
 //                   Dashboard
+//                 </button>
+//                 <button
+//                   onClick={() => {
+//                     navigate("/gpms-leads");
+//                     setAccountOpen(false);
+//                   }}
+//                   className="text-left font-semibold"
+//                 >
+//                   Leads
 //                 </button>
 
 //                 <button
@@ -621,3 +747,4 @@ export default Header;
 // };
 
 // export default Header;
+

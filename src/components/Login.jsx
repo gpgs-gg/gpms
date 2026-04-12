@@ -74,7 +74,7 @@ const Login = () => {
           }
 
           login(user); // sets state + localStorage
-
+          localStorage.setItem("loginTimestamp", Date.now());
           //    console.log("User after login:", user);
           if (user?.Role == "admin") {
             navigate("/dashboard");
@@ -260,34 +260,20 @@ export default Login;
 // import SignupPage from "./SignupPage";
 // import { toast } from "react-toastify";
 // import { useNavigate } from "react-router-dom";
-// // import CryptoJS from "crypto-js";
-
-// // const SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
-
-// // const encryptedUser = localStorage.getItem("user");
-
-// // if (encryptedUser) {
-// //   const bytes = CryptoJS.AES.decrypt(encryptedUser, SECRET_KEY);
-// //   const decrypted = bytes.toString(CryptoJS.enc.Utf8);
-// //   const parsedUser = JSON.parse(decrypted);
-
-// //   console.log("Manually Decrypted User:", parsedUser);
-// // }
 
 // const Login = () => {
 //   const { user } = useAuth();
 
-//   useEffect(() => {
-//     if (user) {
-//       console.log("Decrypted User:", user);
-//       console.log("User Role:", user.Role);
-//     }
-//   }, [user]);
+//   // useEffect(() => {
+//   //   if (user) {
+//   //     console.log("Decrypted User:", user);
+//   //     console.log("User Role:", user.Role);
+//   //   }
+//   // }, [user]);
 
-//   console.log("User Role:", user?.Role);
+//   // console.log("User Role:", user?.Role);
 //   const { login } = useAuth();
 //   const { mutate: sendLoginDetails } = useLogin();
-
 //   const [showPassword, setShowPassword] = useState(false);
 //   const [isSubmitting, setIsSubmitting] = useState(false);
 //   const [isOpen, setIsOpen] = useState(false);
@@ -330,40 +316,61 @@ export default Login;
 //     sendLoginDetails(
 //       {
 //         ...data,
-//         deviceId: localStorage.getItem("deviceId"),
+//         // deviceId: localStorage.getItem("deviceId"),
 //       },
 //       {
 //         onSuccess: (response) => {
-//           const { token, user } = response;
+//           const user = response?.employee;
 
-//           if (!token || !user) {
-//             toast.error("Login failed: Invalid server response");
+//           if (!user) {
+//             toast.error("Login failed");
 //             setIsSubmitting(false);
 //             return;
 //           }
 
-//           // ✅ सही key use करें
-//           // console.log("User Name:", user.Name); // "Pooja Ravindra Lahane"
-//           // console.log("User Email:", user.LoginID); // "poojalahane144@gmail.com"
-//           // console.log("User Role:", user.Role); // "admin"
+//           login(user); // sets state + localStorage
 
-//           // localStorage में save करें
-//           localStorage.setItem("token", token);
-//           localStorage.setItem("user", JSON.stringify(user));
-
-//           login(user); // context/state update
-//           localStorage.setItem("loginTimestamp", Date.now());
-//           if (user.Role === "admin") {
+//           //    console.log("User after login:", user);
+//           if (user?.Role == "admin") {
 //             navigate("/dashboard");
 //           } else {
-//             navigate("/user-dashboard");
+//             navigate("/");
 //           }
-
 //           toast.success("Logged in successfully!");
 //           reset();
 //           setIsSubmitting(false);
-//           // window.location.reload();
 //         },
+//         // onSuccess: (response) => {
+//         //   const { token, user } = response;
+
+//         //   if (!token || !user) {
+//         //     toast.error("Login failed: Invalid server response");
+//         //     setIsSubmitting(false);
+//         //     return;
+//         //   }
+
+//         //   // ✅ सही key use करें
+//         //   // console.log("User Name:", user.Name); // "Pooja Ravindra Lahane"
+//         //   // console.log("User Email:", user.LoginID); // "poojalahane144@gmail.com"
+//         //   // console.log("User Role:", user.Role); // "admin"
+
+//         //   // localStorage में save करें
+//         //   localStorage.setItem("token", token);
+//         //   localStorage.setItem("user", JSON.stringify(user));
+
+//         //   login(user); // context/state update
+//         //   localStorage.setItem("loginTimestamp", Date.now());
+//         //   if (user.Role === "admin") {
+//         //     navigate("/dashboard");
+//         //   } else {
+//         //     navigate("/user-dashboard");
+//         //   }
+
+//         //   toast.success("Logged in successfully!");
+//         //   reset();
+//         //   setIsSubmitting(false);
+//         //   // window.location.reload();
+//         // },
 //         onError: (error) => {
 //           toast.error(
 //             error?.response?.data?.message || "Invalid Login ID or Password",
@@ -374,14 +381,14 @@ export default Login;
 //     );
 //   };
 //   // 🔐 Create deviceId once
-//   useEffect(() => {
-//     let deviceId = localStorage.getItem("deviceId");
+//   // useEffect(() => {
+//   //   let deviceId = localStorage.getItem("deviceId");
 
-//     if (!deviceId) {
-//       deviceId = crypto.randomUUID();
-//       localStorage.setItem("deviceId", deviceId);
-//     }
-//   }, []);
+//   //   if (!deviceId) {
+//   //     deviceId = crypto.randomUUID();
+//   //     localStorage.setItem("deviceId", deviceId);
+//   //   }
+//   // }, []);
 //   return (
 //     <>
 //       <div className="py-12 lg:py-20 flex items-center justify-center bg-gray-100 px-4">
@@ -500,3 +507,4 @@ export default Login;
 // };
 
 // export default Login;
+
