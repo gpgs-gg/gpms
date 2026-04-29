@@ -146,7 +146,7 @@ const Header = () => {
             ) : (
               <>
                 <button
-                  onClick={() => setAccountOpen(!accountOpen)}
+                  onClick={() => navigate("/dashboard")}
                   className="rounded-xl bg-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800"
                 >
                   My Account ▾
@@ -327,7 +327,7 @@ const Header = () => {
                 >
                   Dashboard
                 </button>
-                <button
+                {/* <button
                   onClick={() => {
                     navigate("/gpms-leads");
                     setAccountOpen(false);
@@ -336,7 +336,7 @@ const Header = () => {
                   className="text-left font-semibold"
                 >
                   Leads
-                </button>
+                </button> */}
 
                 <button
                   onClick={() => {
@@ -696,7 +696,10 @@ export default Header;
 //                 </button> */}
 
 //                 <button
-//                   onClick={() => navigate("/dashboard")}
+//                   onClick={() => {
+//                     navigate("/dashboard");
+//                     setMenuOpen(false);
+//                   }}
 //                   className="text-left font-semibold"
 //                 >
 //                   Dashboard
@@ -705,6 +708,7 @@ export default Header;
 //                   onClick={() => {
 //                     navigate("/gpms-leads");
 //                     setAccountOpen(false);
+//                     setMenuOpen(false);
 //                   }}
 //                   className="text-left font-semibold"
 //                 >

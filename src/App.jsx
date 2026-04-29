@@ -18,6 +18,7 @@ import { useAuth } from "./context/AuthContext";
 import { useApp } from "./context/AppProvider.jsx";
 import LeadsNavigation from "./LeadsForGpgs/LeadsNavigation.jsx";
 import EditServicePage from "./admin/EditServicePage.jsx";
+import Gpmsaction from "./admin/Gpmsaction.jsx";
 
 // const ProtectedRoute = ({ children }) => {
 //   const isAuthenticated = localStorage.getItem("user");
@@ -183,13 +184,23 @@ const App = () => {
           path="/dashboard"
           element={
             <ProtectedRoute>
+              <Gpmsaction />
+              {/* <MainServicesPage /> */}
+            </ProtectedRoute>
+          }
+        />
+        {/*  services dashboard */}
+        <Route
+          path="/gpms-actions/main-services"
+          element={
+            <ProtectedRoute>
               <MainServicesPage />
             </ProtectedRoute>
           }
         />
         {/* gpms leads */}
         <Route
-          path="/gpms-leads"
+          path="/gpms-actions/gpms-leads"
           element={
             <ProtectedRoute>
               <LeadsNavigation />
@@ -211,6 +222,7 @@ const App = () => {
 };
 
 export default App;
+
 
 // import { Routes, Route, useLocation } from "react-router-dom";
 // import { useEffect } from "react";
@@ -269,6 +281,8 @@ export default App;
 
 //   return children;
 // };
+
+// //! auto logout
 // const App = () => {
 //   const { user } = useAuth();
 //   useEffect(() => {
@@ -298,13 +312,71 @@ export default App;
 //   //     navigate("/", { replace: true });
 //   //   }
 //   // }, []);
+
+//   // AUTO LOGOUT CONFIG
+//   const TEN_HOURS = 8 * 60 * 60 * 1000;
+//   const ONE_HOUR = 60 * 60 * 1000;
+//   // const ONE_MINUTE = 60 * 1000;
+//   // const TWO_MINUTE = 120 * 1000;
+
+//   useEffect(() => {
+//     if (!user) return; // only run if logged in
+
+//     let lastActivity = Date.now();
+
+//     const updateActivity = () => {
+//       lastActivity = Date.now();
+//     };
+
+//     // Track user activity
+//     window.addEventListener("mousemove", updateActivity);
+//     window.addEventListener("keydown", updateActivity);
+//     window.addEventListener("scroll", updateActivity);
+//     window.addEventListener("click", updateActivity);
+//     window.addEventListener("touchstart", updateActivity);
+
+//     const interval = setInterval(() => {
+//       const now = Date.now();
+//       const loginTimestamp = Number(localStorage.getItem("loginTimestamp"));
+
+//       // 🔴 1. Logout after inactivity (1 hour)
+//       if (now - lastActivity > ONE_HOUR) {
+//         logout();
+//         localStorage.removeItem("loginTimestamp");
+//         window.location.href = "/my-account"; // better than reload
+//         clearInterval(interval);
+//         return;
+//       }
+
+//       // 🔴 2. Logout after total session time (10 hours)
+//       if (loginTimestamp && now - loginTimestamp > TEN_HOURS) {
+//         logout();
+//         localStorage.removeItem("loginTimestamp");
+//         window.location.href = "/my-account";
+//         clearInterval(interval);
+//       }
+//     }, 1000);
+
+//     return () => {
+//       clearInterval(interval);
+//       window.removeEventListener("mousemove", updateActivity);
+//       window.removeEventListener("keydown", updateActivity);
+//       window.removeEventListener("scroll", updateActivity);
+//       window.removeEventListener("click", updateActivity);
+//       window.removeEventListener("touchstart", updateActivity);
+//     };
+//   }, [user, logout]);
+
+
+
+
+
+
+
+
+
 //   return (
 //     <div
-//       // className="bg-red-600"
-//       // className="min-h-screen w-full bg-cover bg-center bg-fixed"
-//       // className="min-h-screen w-full bg-cover bg-center bg-scroll"
-//       // style={{ backgroundImage: `url(${background9})` }}
-//       // className="min-h-screen w-full bg-cover bg-center bg-fixed"
 //       style={{
 //         backgroundImage: "url('/images/aa.png')",
 //         backgroundSize: "cover",
@@ -374,4 +446,3 @@ export default App;
 // };
 
 // export default App;
-

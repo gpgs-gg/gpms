@@ -156,7 +156,7 @@ const Contact = () => {
                   icon="fa-phone"
                   title="Phone"
                   info="(Please Note: WhatsApp message is most preferred)"
-                  lines={["9819636341", "7977438563"]}
+                  lines={["7738441024", "9819636341"]}
                 />
 
                 <InfoItem
@@ -169,8 +169,10 @@ const Contact = () => {
                   icon="fa-map-marker-alt"
                   title="Head Office"
                   lines={[
-                    "Plot No. 132B, Lane No. 7, Nandanvan CHS, ",
-                    "Sector-17, Nerul (E), Navi Mumbai - 400706",
+                    "Gopal's Group",
+                    "Plot No. 128 - 131, Row House No. 10 , ",
+                    " Aloka CHS , Sector - 21, Nerul (E), ",
+                    "Navi Mumbai - 400706"
                   ]}
                 />
 
@@ -197,8 +199,7 @@ const Contact = () => {
                   "whatsapp",
                 ].map((icon) => (
                   <a
-                    key={icon}
-                    href="#"
+                    key={icon}  
                     className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-black transition hover:bg-gray-200"
                   >
                     <i className={`fab fa-${icon} text-xl`}></i>
