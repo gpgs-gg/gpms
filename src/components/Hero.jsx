@@ -86,7 +86,7 @@ export default function Hero() {
         <div className="flex gap-3">
           {/* Call Button */}
           <a
-            href="tel:+919819636341"
+            href="tel:+917738441024"
             className="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white py-3 rounded-xl font-semibold text-[16px]"
           >
             <FaPhoneAlt className="animate-ring" />
@@ -95,7 +95,7 @@ export default function Hero() {
 
           {/* WhatsApp Button */}
           <a
-            href="https://wa.me/919819636341"
+            href="https://wa.me/917738441024"
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1 flex items-center justify-center gap-2 bg-green-500 text-white py-3 rounded-xl font-semibold text-[16px]"
@@ -112,7 +112,7 @@ export default function Hero() {
         data-aos="fade-left"
       >
         <a
-          href="https://wa.me/919819636341"
+          href="https://wa.me/917738441024"
           target="_blank"
           rel="noopener noreferrer"
           className="
@@ -129,7 +129,7 @@ export default function Hero() {
           <FaWhatsapp className="text-2xl md:text-3xl" />
         </a>
         <a
-          href="tel:919819636341"
+          href="tel:917738441024"
           className="
     flex items-center justify-center
     w-12 h-12            /* Mobile */

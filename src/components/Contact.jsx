@@ -156,13 +156,13 @@ const Contact = () => {
                   icon="fa-phone"
                   title="Phone"
                   info="(Please Note: WhatsApp message is most preferred)"
-                  lines={["7738441024", "9819636341"]}
+                  lines={["7738441024"]}
                 />
 
                 <InfoItem
                   icon="fa-envelope"
                   title="Email"
-                  lines={["gopalspms@gmail.com", "kamleshwarkodag@gmail.com"]}
+                  lines={["gopalspms@gmail.com"]}
                 />
 
                 <InfoItem
